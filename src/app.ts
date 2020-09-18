@@ -9,12 +9,12 @@ const socket = socketio(server);
 app.get('/', (req, res) => {
     res.send('Hello, it\'s WS server')
 })
-const messages: Array<any> = []
+const messages: Array<any> = [];
 
 const usersState = new Map();
 
 socket.on('connection', (socketChannel) => {
-    usersState.set(socketChannel, {id: new Date().getTime().toString(), name: 'anonym'} );
+    usersState.set(socketChannel, {id: new Date().getTime().toString(), name: 'anonymous'});
 
     socket.on('disconnect', () => {
         usersState.delete(socketChannel);
@@ -36,6 +36,9 @@ socket.on('connection', (socketChannel) => {
         if (typeof message !== 'string' || message.length > 20) {
             successFn("Message length should be less than 20 chars");
             return;
+        } else if (typeof message !== 'string' || message.length < 1) {
+            successFn('Please enter your message');
+            return;
         }
 
         const user = usersState.get(socketChannel);
@@ -43,23 +46,23 @@ socket.on('connection', (socketChannel) => {
         let messageItem = {
             message: message, id: new Date().getTime(),
             user: {id: user.id, name: user.name}
-        }
+        };
         messages.push(messageItem);
 
         socket.emit('new-message-sent', messageItem);
 
         successFn(null);
-    })
+    });
 
     socketChannel.emit('init-messages-published', messages, (data: string) => {
-        console.log("INIT MESSAGES RECEIVED: " + data )
-    })
+        console.log("INIT MESSAGES RECEIVED: " + data)
+    });
 
     console.log('a user connected')
-})
+});
 
 
-const PORT = process.env.PORT || 3009
+const PORT = process.env.PORT || 3009;
 
 server.listen(PORT, () => {
     console.log('listening on *:3009')

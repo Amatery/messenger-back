@@ -21,9 +21,9 @@ socket.on('connection', (socketChannel) => {
     });
 
     socketChannel.on('client-name-sent', (name: string, successFn) => {
-        console.log(name)
+        console.log(name);
         if (typeof name !== 'string' || name.length < 1) {
-            console.log(name)
+            console.log(name);
             successFn('Please enter your name');
             return;
         }
@@ -70,5 +70,5 @@ socket.on('connection', (socketChannel) => {
 const PORT = process.env.PORT || 3009;
 
 server.listen(PORT, () => {
-    console.log('listening on *:3009')
+    console.log(`listening on ${PORT}`)
 });

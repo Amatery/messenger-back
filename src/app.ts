@@ -20,12 +20,17 @@ socket.on('connection', (socketChannel) => {
         usersState.delete(socketChannel);
     });
 
-    socketChannel.on('client-name-sent', (name: string) => {
-        if (typeof name !== 'string') {
-            return
+    socketChannel.on('client-name-sent', (name: string, successFn) => {
+        console.log(name)
+        if (typeof name !== 'string' || name.length < 1) {
+            console.log(name)
+            successFn('Please enter your name');
+            return;
         }
         const user = usersState.get(socketChannel);
         user.name = name;
+
+        successFn(null)
     });
 
     socketChannel.on('client-typed', () => {
@@ -33,8 +38,8 @@ socket.on('connection', (socketChannel) => {
     });
 
     socketChannel.on('client-message-sent', (message: string, successFn) => {
-        if (typeof message !== 'string' || message.length > 20) {
-            successFn("Message length should be less than 20 chars");
+        if (typeof message !== 'string' || message.length > 100) {
+            successFn("Message length should be less than 100 chars");
             return;
         } else if (typeof message !== 'string' || message.length < 1) {
             successFn('Please enter your message');
